@@ -15,10 +15,9 @@ class DefraReportsPlugin(plugins.SingletonPlugin):
         toolkit.add_resource('fanstatic', 'defrareports')
         toolkit.add_resource('public/js', 'defrareports')
 
-
+    # IReport
     def register_reports(self):
         from ckanext.defrareports.lib import reports
-        return []
         return [
             reports.publishing_report,
             reports.access_history_report,
@@ -26,7 +25,6 @@ class DefraReportsPlugin(plugins.SingletonPlugin):
             reports.quality_report,
             reports.system_stats_report
         ]
-
 
     # ITemplateHelpers
     def get_helpers(self):
