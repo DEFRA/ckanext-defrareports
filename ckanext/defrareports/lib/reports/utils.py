@@ -4,6 +4,7 @@ import ckan.plugins.toolkit as toolkit
 from ckanext.report.report_registry import REPORT_KEYS_OPTIONAL, REPORT_KEYS_REQUIRED
 from ckan.logic import NotFound
 from functools import wraps
+from datetime import datetime
 
 def _get_records(offset=0):
     return toolkit.get_action('package_search')({}, {
@@ -58,16 +59,19 @@ def report(report_dict):
                     'url': report_url,
                     'format': 'HTML',
                     'mimetype': 'text/html',
+                    'last_modified': datetime.now(),
                     'name': '{} report'.format(pretty_name)
                 },{
                     'url': '{}?format=json'.format(report_url),
                     'format': 'JSON',
                     'mimetype': 'application/json',
+                    'last_modified': datetime.now(),
                     'name': '{} report – machine-readable data'.format(pretty_name)
                 },{
                     'url': '{}?format=csv'.format(report_url),
                     'format': 'CSV',
                     'mimetype': 'text/csv',
+                    'last_modified': datetime.now(),
                     'name': '{} report – tabular data'.format(pretty_name)
                 }]
             }
