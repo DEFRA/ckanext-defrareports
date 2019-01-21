@@ -31,6 +31,7 @@ class WorkingEntry(object):
     'option_defaults': {},
     'option_combinations': None,
     'owner_org': 'defra',
+    'license': 'uk-ogl',
     'template': 'report/broken.html'
 })
 def broken_resource_report():

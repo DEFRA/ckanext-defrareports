@@ -31,6 +31,7 @@ def report(report_dict):
     package_title = "{}: {}".format(site_title, pretty_name)
     package_name = "{}-{}".format(site_prefix, report_dict['name'])
     owner_org = report_dict['owner_org']
+    license = report_dict.get('license', None)
 
     def decorate(generator):
         if 'description' not in report_dict:
@@ -51,6 +52,7 @@ def report(report_dict):
                 'title': package_title,
                 'notes': report_dict['description'],
                 'private': False,
+                'license_id': license,
                 'owner_org': owner_org,
                 'resources': [{
                     'url': report_url,

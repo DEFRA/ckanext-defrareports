@@ -13,6 +13,7 @@ from ckanext.defrareports.lib.reports.utils import get_all_datasets, report
     'option_defaults': {},
     'option_combinations': None,
     'owner_org': 'defra',
+    'license': 'uk-ogl',
     'template': 'report/system_stats.html'
 })
 def system_stats_report():

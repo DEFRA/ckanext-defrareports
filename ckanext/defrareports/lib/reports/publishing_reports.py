@@ -12,6 +12,7 @@ from ckanext.defrareports.lib.reports.utils import report
     'option_defaults': {},
     'option_combinations': None,
     'owner_org': 'defra',
+    'license': 'uk-ogl',
     'template': 'report/publishing.html'
 })
 def publishing_history_report():

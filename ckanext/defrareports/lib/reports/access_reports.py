@@ -31,6 +31,7 @@ class WorkingEntry(object):
     'option_defaults': {},
     'option_combinations': None,
     'owner_org': 'defra',
+    'license': 'uk-ogl',
     'template': 'report/access.html'
 })
 def access_history_report():

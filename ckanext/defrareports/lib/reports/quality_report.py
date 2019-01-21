@@ -20,6 +20,7 @@ def bad_record(dataset, reasons):
     'option_defaults': {},
     'option_combinations': None,
     'owner_org': 'defra',
+    'license': 'uk-ogl',
     'template': 'report/quality.html'
 })
 def quality_report():
