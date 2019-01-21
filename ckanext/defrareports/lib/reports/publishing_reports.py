@@ -3,9 +3,20 @@ from datetime import datetime
 import random
 
 import ckan.plugins.toolkit as toolkit
+from ckanext.defrareports.lib.reports.utils import report
 
 
+@report({
+    'name': 'publishing',
+    'title': 'Publishing',
+    'option_defaults': {},
+    'option_combinations': None,
+    'owner_org': 'defra',
+    'template': 'report/publishing.html'
+})
 def publishing_history_report():
+    """For each organisation, this report shows both the addition on new dataset records and
+    the modification of those records for the current year, 2018."""
     table = []
     context = {}
 

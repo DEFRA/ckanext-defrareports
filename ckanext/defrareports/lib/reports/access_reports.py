@@ -4,6 +4,7 @@ import random
 import re
 
 import ckan.plugins.toolkit as toolkit
+from ckanext.defrareports.lib.reports.utils import report
 
 LOGFILE = "/var/log/apache2/ckan_default.custom.log"
 DATASETNAME_REGEX = re.compile(".*GET /dataset/([a-z0-9\-]+).*")
@@ -24,7 +25,17 @@ class WorkingEntry(object):
     dataset_name = ""
 
 
+@report({
+    'name': 'access',
+    'title': 'Access metrics',
+    'option_defaults': {},
+    'option_combinations': None,
+    'owner_org': 'defra',
+    'template': 'report/access.html'
+})
 def access_history_report():
+    """This report shows both how often a dataset record was viewed in a browser,
+    and how often a dataset from that organisation appeared in search results"""
     # PROTOTYPE access report which uses the apache log to generate data.
     # Really we want this to be generated from GA or similar.
     table = []

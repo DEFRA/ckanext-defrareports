@@ -19,7 +19,7 @@ class DefraReportsPlugin(plugins.SingletonPlugin):
     def register_reports(self):
         from ckanext.defrareports.lib import reports
         return [
-            reports.publishing_report,
+            reports.publishing_history_report,
             reports.access_history_report,
             reports.broken_resource_report,
             reports.quality_report,

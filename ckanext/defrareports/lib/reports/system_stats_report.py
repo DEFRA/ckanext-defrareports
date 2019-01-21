@@ -5,10 +5,18 @@
 import ckan.plugins.toolkit as toolkit
 
 from ckanext.defrareports.helpers import is_private_resource
-from ckanext.defrareports.lib.reports.utils import get_all_datasets
+from ckanext.defrareports.lib.reports.utils import get_all_datasets, report
 
-
+@report({
+    'name': 'system-stats',
+    'title': 'System stats',
+    'option_defaults': {},
+    'option_combinations': None,
+    'owner_org': 'defra',
+    'template': 'report/system_stats.html'
+})
 def system_stats_report():
+    'A compilation of the stats asked for in the planning meeting on Thu, 20 Dec 2018'
     # PROTOTYPE report that measures specific stats to allow us to make
     # decisions on the direction of the alpha
     counts = {

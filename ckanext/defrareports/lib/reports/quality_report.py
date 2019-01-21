@@ -5,6 +5,7 @@
 
 import ckan.plugins.toolkit as toolkit
 from ckanext.defrareports.lib.quality import score_record
+from ckanext.defrareports.lib.reports.utils import report
 
 def bad_record(dataset, reasons):
     return {
@@ -13,8 +14,19 @@ def bad_record(dataset, reasons):
         'reasons': reasons
     }
 
-
+@report({
+    'name': 'quality',
+    'title': 'Metadata quality',
+    'option_defaults': {},
+    'option_combinations': None,
+    'owner_org': 'defra',
+    'template': 'report/quality.html'
+})
 def quality_report():
+    """The quality of the metadata collected for each organisation.
+    The score is calculated according to adherence to the published
+    <a href="">Defra metadata standards</a>.
+    """
     # PROTOTYPE quality report which measures the quality of metadata within
     # a publisher
     table = []
