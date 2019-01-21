@@ -31,7 +31,10 @@ class WorkingEntry(object):
     'option_defaults': {},
     'option_combinations': None,
     'owner_org': 'defra',
-    'license': 'uk-ogl',
+    'license_id': 'uk-ogl',
+    'maintainer': 'Simon Worthington',
+    'maintainer_email': 'simon.worthington@defra.gsi.gov.uk',
+    'extras': [{'key': 'frequency-of-update', 'value': 'daily'}],
     'template': 'report/broken.html'
 })
 def broken_resource_report():

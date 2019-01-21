@@ -1,4 +1,5 @@
 from ckan.plugins.toolkit import _, request, get_action
+import re
 import json
 
 
@@ -84,3 +85,9 @@ def get_package_extras(pkg):
 
 def is_private_resource(pkg):
     return get_package_extras(pkg).get('private-resources') == "True"
+
+def slugify(str):
+    return re.sub('[^a-z0-9_-]', '-', str.lower())
+
+def unslugify(str):
+    return re.sub('[_-]', ' ', str.capitalize())

@@ -1,6 +1,6 @@
 # coding=utf-8
-import re
 import ckan.plugins.toolkit as toolkit
+from ckanext.defrareports.helpers import slugify, unslugify
 from ckanext.report.report_registry import REPORT_KEYS_OPTIONAL, REPORT_KEYS_REQUIRED
 from ckan.logic import NotFound
 from functools import wraps
@@ -27,12 +27,15 @@ def report(report_dict):
     context = {'ignore_auth': True}
     report_url = toolkit.url_for('report', report_name=report_dict['name'], qualified=True)
     site_title = toolkit.get_action('config_option_show')(context, {'key': 'ckan.site_title'})
-    site_prefix = re.sub('[^a-z0-9_-]', '-', site_title.lower())
-    pretty_name = report_dict.get('title', re.sub('[_-]', ' ', report_dict['name'].capitalize()))
+    site_prefix = slugify(site_title)
+    pretty_name = report_dict.get('title', unslugify(report_dict['name']))
     package_title = "{}: {}".format(site_title, pretty_name)
     package_name = "{}-{}".format(site_prefix, report_dict['name'])
-    owner_org = report_dict['owner_org']
-    license = report_dict.get('license', None)
+
+    extra_info = {}
+    for k in set(report_dict.keys()) - REPORT_KEYS_REQUIRED - REPORT_KEYS_OPTIONAL:
+        extra_info[k] = report_dict[k]
+        del report_dict[k]
 
     def decorate(generator):
         if 'description' not in report_dict:
@@ -53,8 +56,6 @@ def report(report_dict):
                 'title': package_title,
                 'notes': report_dict['description'],
                 'private': False,
-                'license_id': license,
-                'owner_org': owner_org,
                 'resources': [{
                     'url': report_url,
                     'format': 'HTML',
@@ -75,13 +76,11 @@ def report(report_dict):
                     'name': '{} report – tabular data'.format(pretty_name)
                 }]
             }
+            package.update(extra_info)
             save_action(context, package)
             return results
 
         report_dict['generate'] = save_report
-        for unknown_key in set(report_dict.keys()) - REPORT_KEYS_REQUIRED - REPORT_KEYS_OPTIONAL:
-            del report_dict[unknown_key]
-
         # Yes, we don't return a function here, meaning that the thing
         # we originally defined as a function is now in fact a dict.
         return report_dict
