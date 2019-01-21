@@ -86,7 +86,7 @@ def system_stats_report():
         counts['total_datasets'] += 1
 
     return {
-        'table': [''],
+        'table': [{}],
         'are_some_results': True,
         'counts': counts,
         'harvest_sources': harvest_sources,
