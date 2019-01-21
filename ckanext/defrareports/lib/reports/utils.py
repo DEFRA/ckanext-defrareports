@@ -41,7 +41,7 @@ def report(report_dict):
             results = generator(*args, **kwargs)
 
             try:
-                toolkit.get_action('package_show')(context, {'name_or_id': package_name})
+                toolkit.get_action('package_show')({'ignore_auth': True}, {'name_or_id': package_name})
                 save_action = toolkit.get_action('package_update')
             except NotFound:
                 save_action = toolkit.get_action('package_create')
