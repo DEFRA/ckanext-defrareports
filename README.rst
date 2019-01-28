@@ -3,7 +3,8 @@ ckanext-defrareports
 ====================
 
 **Status:** Development
-**CKAN Version**: 1.7.1+
+
+**CKAN Version**: 2.6+
 
 --------
 Overview
