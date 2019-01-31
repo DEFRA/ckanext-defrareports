@@ -12,8 +12,8 @@ class DefraReportsPlugin(plugins.SingletonPlugin):
     def update_config(self, config_):
         toolkit.add_template_directory(config_, 'templates')
         toolkit.add_public_directory(config_, 'public')
-        toolkit.add_resource('fanstatic', 'defrareports')
-        toolkit.add_resource('public/js', 'defrareports')
+        toolkit.add_resource('fanstatic', 'fanstatic')
+        toolkit.add_resource('public', 'defrareports')
 
     # IReport
     def register_reports(self):

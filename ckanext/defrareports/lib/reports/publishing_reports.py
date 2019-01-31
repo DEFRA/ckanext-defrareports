@@ -1,9 +1,11 @@
 from collections import defaultdict
 from datetime import datetime
-import random
 
 import ckan.plugins.toolkit as toolkit
 from ckanext.defrareports.lib.reports.utils import report
+
+from dateutil.relativedelta import relativedelta
+from dateutil.rrule import rrule, MONTHLY
 
 
 @report({
@@ -20,13 +22,13 @@ from ckanext.defrareports.lib.reports.utils import report
 })
 def publishing_history_report():
     """For each organisation, this report shows both the addition on new dataset records and
-    the modification of those records for the current year, 2018."""
+    the modification of those records for the last 12 months."""
     table = []
     context = {}
 
-    year = datetime.now().year
-    months = ["{}-{:0>2}-01".format(year, x) for x in range(12, 0, -1)]
-
+    # Generate a list of dates for the last 12 months
+    one_year_prev = datetime.now() - relativedelta(months=11, day=1)
+    months = [x.strftime('%Y-%m-%d') for x in rrule(freq=MONTHLY, count=12, dtstart=one_year_prev)]
     organisation_list = toolkit.get_action('organization_list')(
         context, {
             'all_fields': True,
@@ -48,17 +50,15 @@ def publishing_history_report():
         }
 
         def new_inner_dict():
-            return {'added': random.randint(1, 20), 'modified': random.randint(5, 50)}
+            return {'added': 0, 'modified': 0}
 
         values = defaultdict(new_inner_dict)
         for dataset in datasets:
             date = datetime.strptime(dataset['metadata_created'], '%Y-%m-%dT%H:%M:%S.%f')
-            partial = "{}-{:0>2}-01".format(date.year, date.month)
-            values[partial]['added'] = values[partial]['added'] + 1
-
-            date = datetime.strptime(dataset['metadata_modified'], '%Y-%m-%dT%H:%M:%S.%f')
-            partial = "{}-{:0>2}-01".format(date.year, date.month)
-            values[partial]['modified'] = values[partial]['modified'] + 1
+            created_date = date.strftime('%Y-%m-01')
+            values[created_date]['added'] = values[created_date]['added'] + 1
+            modified_date = datetime.strptime(dataset['metadata_modified'], '%Y-%m-%dT%H:%M:%S.%f')
+            values[modified_date]['modified'] = values[modified_date]['modified'] + 1
 
         for month in months:
             entry[month] = values[month]
