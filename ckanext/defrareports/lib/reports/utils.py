@@ -6,6 +6,10 @@ from ckan.logic import NotFound
 from functools import wraps
 from datetime import datetime
 
+from dateutil.relativedelta import relativedelta
+from dateutil.rrule import rrule, MONTHLY
+
+
 def _get_records(offset=0):
     return toolkit.get_action('package_search')({}, {
         'q': '',
@@ -85,3 +89,13 @@ def report(report_dict):
         # we originally defined as a function is now in fact a dict.
         return report_dict
     return decorate
+
+
+def generate_months(num=12):
+    """
+    Generate a list of months start from `num` months ago to the current month
+    :param num: number of months to go back
+    :return: List of date strings
+    """
+    prev = datetime.now() - relativedelta(months=num-1, day=1)
+    return [x.strftime('%Y-%m-%d') for x in rrule(freq=MONTHLY, count=num, dtstart=prev)]
