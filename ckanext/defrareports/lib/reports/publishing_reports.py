@@ -2,10 +2,7 @@ from collections import defaultdict
 from datetime import datetime
 
 import ckan.plugins.toolkit as toolkit
-from ckanext.defrareports.lib.reports.utils import report
-
-from dateutil.relativedelta import relativedelta
-from dateutil.rrule import rrule, MONTHLY
+from ckanext.defrareports.lib.reports.utils import report, generate_months
 
 
 @report({
@@ -26,9 +23,6 @@ def publishing_history_report():
     table = []
     context = {}
 
-    # Generate a list of dates for the last 12 months
-    one_year_prev = datetime.now() - relativedelta(months=11, day=1)
-    months = [x.strftime('%Y-%m-%d') for x in rrule(freq=MONTHLY, count=12, dtstart=one_year_prev)]
     organisation_list = toolkit.get_action('organization_list')(
         context, {
             'all_fields': True,
@@ -60,7 +54,7 @@ def publishing_history_report():
             modified_date = datetime.strptime(dataset['metadata_modified'], '%Y-%m-%dT%H:%M:%S.%f')
             values[modified_date]['modified'] = values[modified_date]['modified'] + 1
 
-        for month in months:
+        for month in generate_months():
             entry[month] = values[month]
 
         table.append(entry)

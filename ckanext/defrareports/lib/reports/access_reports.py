@@ -1,28 +1,12 @@
-from collections import defaultdict
-from datetime import datetime
-import random
 import re
 
+import sqlalchemy
+
+import ckan.model as model
 import ckan.plugins.toolkit as toolkit
-from ckanext.defrareports.lib.reports.utils import report
-
-LOGFILE = "/var/log/apache2/ckan_default.custom.log"
-DATASETNAME_REGEX = re.compile(".*GET /dataset/([a-z0-9\-]+).*")
-
-
-def line_is_dataset_view(line):
-    m = DATASETNAME_REGEX.match(line)
-    if not m:
-        return None
-
-    return m.groups()[0]
-
-
-class WorkingEntry(object):
-    organisation_name = ""
-    organisation_title = ""
-    date = None
-    dataset_name = ""
+from ckanext.defrareports.lib.reports.utils import report, generate_months
+from ckanext.ga_report import ga_model
+from ckanext.ga_report.ga_model import GA_Url
 
 
 @report({
@@ -38,44 +22,11 @@ class WorkingEntry(object):
     'template': 'report/access.html'
 })
 def access_history_report():
-    """This report shows both how often a dataset record was viewed in a browser,
-    and how often a dataset from that organisation appeared in search results"""
-    # PROTOTYPE access report which uses the apache log to generate data.
-    # Really we want this to be generated from GA or similar.
+    """
+    This reports shows how many times dataset pages have been accessed for each organisation.
+    """
     table = []
     context = {}
-
-    current_month = datetime.now().month
-    year = datetime.now().year
-    months = ["{}-{:0>2}-01".format(year, x) for x in range(12, 0, -1)]
-    entries = defaultdict(list)
-
-    with open(LOGFILE, 'r') as f:
-        for line in f.readlines():
-            dataset_name = line_is_dataset_view(line)
-            if not dataset_name:
-                continue
-
-            try:
-                pkg = toolkit.get_action('package_show')(context, {
-                    'id': dataset_name
-                })
-            except:
-                continue
-
-            # We should really regex this out of the line with the name ....
-            parts = line.split(' ')
-            entry_date = datetime.strptime(parts[3][1:], "%d/%b/%Y:%H:%M:%S")
-            if entry_date.year != year:
-                continue
-
-            we = WorkingEntry()
-            we.dataset_name = dataset_name
-            we.organisation_name = pkg['organization']['name']
-            we.organisation_title = pkg['organization']['title']
-            we.date = entry_date.strftime("%Y-%m-01")
-
-            entries[we.date].append(we)
 
     organisation_list = toolkit.get_action('organization_list')(
         context, {
@@ -84,16 +35,46 @@ def access_history_report():
         }
     )
 
-    for organisation in organisation_list:
+    org_ids = [x['name'] for x in organisation_list]
+
+    # Get counts of visits per month per organisation from google analytics
+    q = model.Session.query(
+        GA_Url.department_id,
+        GA_Url.period_name,
+        sqlalchemy.func.sum(
+            sqlalchemy.cast(GA_Url.pageviews, sqlalchemy.types.INT))
+        ).filter(
+            GA_Url.department_id.in_(org_ids)
+        ).filter(
+            GA_Url.url.like('/dataset/%')
+        ).filter(
+            GA_Url.package_id != ''
+        ).filter(
+            ga_model.GA_Url.period_name != 'All'
+        ).group_by(GA_Url.department_id, GA_Url.period_name)
+
+    # Build a mapping of org name to months
+    stats = {x: {} for x in org_ids}
+    months = generate_months()
+    for org in stats.keys():
+        stats[org] = {month: 0 for month in months}
+
+    # Update org -> month map with any actual values gathered from GA
+    for record in q.all():
+        org_id, period, count = record
+        full_month = '{}-01'.format(period)
+        if full_month in stats[org_id]:
+            stats[org_id][full_month] = count
+
+    # Build the graph entries for the template
+    for org in organisation_list:
         entry = {
-         'name': organisation['name'],
-         'title': organisation['title'],
+            'name': org['name'],
+            'title': org['title'],
         }
 
-        for month in months:
-            we = [1 for o in entries.get(month, []) if o.organisation_name == organisation['name']]
-            totes = sum(we) or random.randint(0, 150)
-            entry[month] = {'visited': totes, 'search': random.randint(0,500)}
+        for month, count in stats[org['name']].iteritems():
+            entry[month] = {'visited': count}
 
         table.append(entry)
 
