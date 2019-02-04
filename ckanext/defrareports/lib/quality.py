@@ -9,6 +9,8 @@
 # reasons we give to the action plan.
 import re
 
+import pytz
+
 
 def score_record(dataset):
     """
@@ -126,6 +128,12 @@ class Checks(object):
             end_date = parse(end)
         except Exception:
             return False
+
+        # Ensure datetimes are not naive
+        if start_date.tzinfo is None or start_date.tzinfo.utcoffset(start_date):
+            start_date = start_date.replace(tzinfo=pytz.utc)
+        if end_date.tzinfo is None or end_date.tzinfo.utcoffset(end_date):
+            end_date = end_date.replace(tzinfo=pytz.utc)
 
         if start_date > end_date:
             return False
