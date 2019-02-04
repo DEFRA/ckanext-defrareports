@@ -64,7 +64,7 @@ def access_history_report():
         org_id, period, count = record
         full_month = '{}-01'.format(period)
         if full_month in stats[org_id]:
-            stats[org_id][full_month] = count
+            stats[org_id][full_month] = int(count)
 
     # Build the graph entries for the template
     for org in organisation_list:
