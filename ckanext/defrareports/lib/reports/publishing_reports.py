@@ -2,7 +2,7 @@ from collections import defaultdict
 from datetime import datetime
 
 import ckan.plugins.toolkit as toolkit
-from ckanext.defrareports.lib.reports.utils import report, generate_months
+from ckanext.defrareports.lib.reports.utils import report, generate_months, get_all_datasets
 
 
 @report({
@@ -31,12 +31,7 @@ def publishing_history_report():
     )
 
     for organisation in organisation_list:
-        datasets = toolkit.get_action('package_search')(
-            context, {
-                'q': 'owner_org:{}'.format(organisation['id']),
-                'rows': 10000
-            }
-        )['results']
+        datasets = get_all_datasets(org=organisation['name'])
 
         entry = {
             'name': organisation['name'],
