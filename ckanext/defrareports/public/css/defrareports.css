@@ -14,3 +14,17 @@
 .c3 path, .c3 line {
   fill: none;
 }
+
+.org-quality-report .overview > div {
+  text-align: center;
+}
+.org-quality-report .overview h2 {
+  margin-top: 5px;
+}
+
+.org-quality-report .worst-offenders .dataset-name {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-top: 2px;
+}
