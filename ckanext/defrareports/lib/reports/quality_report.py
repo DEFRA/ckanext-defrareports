@@ -31,10 +31,9 @@ def bad_record(dataset, reasons):
 def quality_report():
     """The quality of the metadata collected for each organisation.
     The score is calculated according to adherence to the published
-    <a href="">Defra metadata standards</a>.
+    Defra metadata standards.
     """
-    # PROTOTYPE quality report which measures the quality of metadata within
-    # a publisher
+    # Report which measures the quality of metadata within a publisher
     table = []
     context = {}
 
