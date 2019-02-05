@@ -1,31 +1,78 @@
 {% block primary %}
-
-    {% for row in table %}
-        <h2>{{ row.title }} </h2>
-
-        <table cellspacing="8" cellpadding="8" width="100%">
-            <tr>
-                <td>Average quality score</td>
-                <td>{{ row.average }}/100</td>
-                <td>Records processed</td>
-                <td>{{ row.record_count }}</td>
-            </tr>
-        </table>
-
+  {% for row in table %}
+    <div class="panel panel-default org-quality-report">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ row.title }}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="row overview">
+          <div class="col-md-6">
+            <h2>
+              {{ row.record_count }}
+              <br />
+              <small>Records Processed</small>
+            </h2>
+          </div>
+          <div class="col-md-6">
+            <h2>
+              {{ row.average }}/100<br />
+              <small>Average Score</small>
+            </h2>
+          </div>
+        </div>
         {% if row.worst_offenders %}
-            <h3 style="color: #666;">{{ row.worst_offenders|length }} records most in need of improvement</h3>
-            {% for (score, offender) in row.worst_offenders %}
-            <div>
-                <a class="expando-report" href="javascript:void(0);">{{ offender.title }}</a> ({{score}}/100) - <a href="/dataset/{{offender.name}}" style="font-size: small;">View dataset</a>
-                <ul style="display: none;">
-                    {% for reason in offender.reasons %}
-                        <li>{{reason}}</li>
-                    {% endfor %}
-                </ul>
+          <div class="row report">
+            <div class="col-md-12">
+              <hr />
+              <p class="text-center">
+                <strong>
+                  {{ row.worst_offenders|length }} records most in need of improvement
+                </strong>
+              </p>
+              <div class="panel-group worst-offenders" role="tablist" id="{{ row.name }}-worst-offenders-accordion">
+                {% for (score, offender) in row.worst_offenders %}
+                  <div class="panel panel-default">
+                    <div class="panel-heading" role="tab">
+                      <div class="row">
+                        <div class="col-md-1" data-toggle="tooltip" title="This dataset scores {{ score }} out of 100 against Defra's metadata standards">
+                          <span class="label label-{% if score >= 80 %}info{% elif score >= 60 %}warning{% else %}danger{% endif %}">
+                            {{ score }}/100
+                          </span>
+                        </div>
+                        <div class="col-md-11 dataset-name">
+                          &nbsp;
+                          <a role="button" data-toggle="collapse" data-parent="#{{ row.name }}-worst-offenders-accordion" href="#{{ offender.name }}">
+                            <div data-toggle="tooltip" title="{{ offender.title }}" style="display:inline-block">
+                              {{ offender.title }}
+                            </div>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="{{ offender.name }}" class="panel-collapse collapse worst-offender-panel" role="tabpanel">
+                      <div class="panel-body">
+                        <ul class="list-group">
+                          <li class="list-group-item">
+                            <strong>{{ offender.reasons|length }} Issues Found</strong>
+                          </li>
+                          {% for reason in offender.reasons %}
+                            <div class="list-group-item">
+                              <i class="fa fa-exclamation-circle text-muted"></i>&nbsp;{{ reason }}
+                            </div>
+                          {% endfor %}
+                        </ul>
+                        <a class="btn btn-default" href="/dataset/{{ offender.name }}" target="_blank">
+                          <i class="fa fa-table"></i> View Dataset
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
             </div>
-            {% endfor %}
+          </div>
         {% endif %}
-        <hr/>
-    {% endfor %}
-
+      </div>
+    </div>
+  {% endfor %}
 {% endblock %}

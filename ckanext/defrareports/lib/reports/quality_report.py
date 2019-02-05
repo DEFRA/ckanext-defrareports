@@ -5,7 +5,8 @@
 
 import ckan.plugins.toolkit as toolkit
 from ckanext.defrareports.lib.quality import score_record
-from ckanext.defrareports.lib.reports.utils import report
+from ckanext.defrareports.lib.reports.utils import report, get_all_datasets
+
 
 def bad_record(dataset, reasons):
     return {
@@ -13,6 +14,7 @@ def bad_record(dataset, reasons):
         'title': dataset['title'],
         'reasons': reasons
     }
+
 
 @report({
     'name': 'quality',
@@ -44,7 +46,6 @@ def quality_report():
     )
 
     for organisation in organisation_list:
-        bad_entries = []
         entry = {
          'name': organisation['name'],
          'title': organisation['title'],
@@ -53,12 +54,7 @@ def quality_report():
          'worst_offenders': []
         }
 
-        datasets = toolkit.get_action('package_search')(
-            context, {
-                'q': 'owner_org:{}'.format(organisation['id']),
-                'rows': 10000
-            }
-        )['results']
+        datasets = get_all_datasets(org=organisation['name'])
 
         ranked = []
         for dataset in datasets:

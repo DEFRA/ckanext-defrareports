@@ -27,7 +27,7 @@ def score_record(dataset):
             score -= penalty
             reasons.append(reason)
 
-    return (score or 0, reasons)
+    return score or 0, reasons
 
 
 def _find_extra(dataset, key):
@@ -91,7 +91,7 @@ class Checks(object):
         if len(dataset['notes'].strip()) == 0:
             return True
 
-        for word in re.split('\W+', dataset['notes']):
+        for word in re.split(r'\W+', dataset['notes']):
             if word.upper() == word:  # all uppercase
                 return False
         return True
@@ -126,7 +126,7 @@ class Checks(object):
         try:
             start_date = parse(start)
             end_date = parse(end)
-        except Exception:
+        except (ValueError, TypeError):
             return False
 
         # Ensure datetimes are not naive
@@ -146,23 +146,24 @@ CHECKS = {
 
     # Main metadata
     (Checks.reasonable_title, 5, "The title of this record is too long"),
-    (Checks.valid_title,      5, "The title of this record is too short"),
+    (Checks.valid_title, 5, "The title of this record is too short"),
     (Checks.description_long_enough, 10, "The description for this record is not very long/detailed"),
-    (Checks.is_acronym_free,         10, "This description contains acronyms and their meaning may not be clear"),
-    (Checks.has_licence,             10, "This record does not appear to specify a licence"),
-    # Extras
-    (Checks.has_frequency,    5, "The update frequency of this record is not set"),
+    (Checks.is_acronym_free, 10, "This description contains acronyms and their meaning may not be clear"),
+    (Checks.has_licence, 10, "This record does not appear to specify a licence"),
 
-    (Checks.has_temporal_extent,              5, "This record does not describe what time period (temporal extent) it covers"),
-    (Checks.temporal_is_accurate_if_present,  5, "The temporal extent is inaccurate"),
+    # Extras
+    (Checks.has_frequency, 5, "The update frequency of this record is not set"),
+
+    (Checks.has_temporal_extent, 5, "This record does not describe what time period (temporal extent) it covers"),
+    (Checks.temporal_is_accurate_if_present, 5, "The temporal extent is inaccurate"),
 
     # Resources
-    (Checks.has_resources,   10, "This record appears to have no data"),
+    (Checks.has_resources, 10, "This record appears to have no data"),
     (Checks.resolvable_links, 5, "Some of the resources do not appear to work"),
-    (Checks.unique_links,     5, "Resources are not unique, there are duplicates"),
+    (Checks.unique_links, 5, "Resources are not unique, there are duplicates"),
 
     # Contacts
-    (Checks.has_contacts,     5, "There is no contact information for this dataset"),
+    (Checks.has_contacts, 5, "There is no contact information for this dataset"),
 }
 
 # Currently unimplemented from the Quality Action Plan
