@@ -10,22 +10,32 @@ from dateutil.relativedelta import relativedelta
 from dateutil.rrule import rrule, MONTHLY
 
 
-def _get_records(offset=0):
+def _get_records(offset=0, org=None):
+    query = ''
+    if org is not None:
+        query = 'organization:{}'.format(org)
     return toolkit.get_action('package_search')({}, {
-        'q': '',
+        'q': query,
         'rows': 1000,
         'start': offset
     })
 
 
-def get_all_datasets():
-    response = _get_records(0)
+def get_all_datasets(org=None):
+    """
+    Return all datasets. Optionally restricted by org name.
+
+    :param org: Restrict to given organisation
+    :return: List of datasets
+    """
+    response = _get_records(0, org=org)
     total_records = response['count']
     datasets = response['results']
     while len(datasets) != total_records:
-        response = _get_records(len(datasets))
+        response = _get_records(len(datasets), org=org)
         datasets += response['results']
     return datasets
+
 
 def report(report_dict):
     context = {'ignore_auth': True}
