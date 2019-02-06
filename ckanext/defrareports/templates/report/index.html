@@ -19,7 +19,7 @@
     <div class="row">
       <p class="col-md-9">
         Reporting on the metadata collected from Defra systems, various reports are available
-        along with downloads for the reporting data. All reports show data for the current year, 2018,
+        along with downloads for the reporting data. All reports show data for the last 12 months,
         but where available archived reports will be shown.
       </p>
     </div>
@@ -40,7 +40,7 @@
         <div class="panel panel-success">
           <div class="panel-heading">Number of datasets</div>
           <div class="panel-body report-number">
-            {{  '{0:,}'.format(data.statistics.dataset_count) }}
+            {{ '{0:,}'.format(data.statistics.dataset_count) }}
           </div>
         </div>
       </div>
