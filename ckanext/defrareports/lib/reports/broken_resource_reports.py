@@ -1,28 +1,5 @@
-from collections import defaultdict
-from datetime import datetime
-import random
-import re
-
 import ckan.plugins.toolkit as toolkit
-from ckanext.defrareports.lib.reports.utils import report
-
-LOGFILE = "/var/log/apache2/ckan_default.custom.log"
-DATASETNAME_REGEX = re.compile(".*GET /dataset/([a-z0-9\-]+).*")
-
-
-def line_is_dataset_view(line):
-    m = DATASETNAME_REGEX.match(line)
-    if not m:
-        return None
-
-    return m.groups()[0]
-
-
-class WorkingEntry(object):
-    organisation_name = ""
-    organisation_title = ""
-    date = None
-    dataset_name = ""
+from ckanext.defrareports.lib.reports.utils import report, get_all_datasets
 
 
 @report({
@@ -43,10 +20,6 @@ def broken_resource_report():
     but the metadata record is not updated."""
     table = []
     context = {}
-
-    year = datetime.now().year
-    months = ["{}-{:0>2}-01".format(year, x) for x in range(12, 0, -1)]
-
     organisation_list = toolkit.get_action('organization_list')(
         context, {
             'all_fields': True,
@@ -55,13 +28,24 @@ def broken_resource_report():
     )
 
     for organisation in organisation_list:
+        datasets = get_all_datasets(org=organisation['name'])
         entry = {
             'name': organisation['name'],
             'title': organisation['title'],
+            'total_datasets': len(datasets),
+            'total_resources': 0,
+            'broken_datasets': 0,
+            'broken_resources': 0,
         }
-
-        for month in months:
-            entry[month] = {'broken': random.randint(0, 30)}
+        for dataset in datasets:
+            broken = False
+            for resource in dataset['resources']:
+                entry['total_resources'] += 1
+                if resource.get('link_status') != 'active':
+                    entry['broken_resources'] += 1
+                    broken = True
+            if broken:
+                entry['broken_datasets'] += 1
 
         table.append(entry)
 
