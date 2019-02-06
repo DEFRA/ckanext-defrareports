@@ -29,21 +29,12 @@ def check_dataset_resources_job(dataset):
                 new_status = 'dead'
 
         if new_status != resource.get('link_status'):
-            try:
-                toolkit.get_action('resource_patch')({
-                    'ignore_auth': True
-                }, {
-                    'id': resource['id'],
-                    'link_status': new_status
-                })
-            except NotFound:
-                logger.warn('Resource {}, from Dataset {} not found'.format(
-                    resource['id'], dataset['name'])
-                )
-            else:
-                logger.info('Resource {}, from Dataset {} updated successfully'.format(
-                    resource['id'], dataset['name'])
-                )
+            toolkit.get_action('resource_patch')({
+                'ignore_auth': True
+            }, {
+                'id': resource['id'],
+                'link_status': new_status
+            })
 
 
 class CheckBrokenResourcesCommand(toolkit.CkanCommand):
