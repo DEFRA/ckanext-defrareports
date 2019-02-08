@@ -82,6 +82,9 @@ setup(
         [ckan.plugins]
         defrareports=ckanext.defrareports.plugin:DefraReportsPlugin
 
+        [paste.paster_command]
+        check_broken_resources = ckanext.defrareports.commands.check_broken_resources:CheckBrokenResourcesCommand
+
         [babel.extractors]
         ckan = ckan.lib.extract:extract_ckan
     ''',
