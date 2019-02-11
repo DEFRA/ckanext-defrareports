@@ -43,7 +43,8 @@ class DefraReportsPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
 
     def _modify_resource_schema(self, schema):
         schema['resources'].update({
-            'link_status': [toolkit.get_validator('ignore_missing')]
+            'link_status': [toolkit.get_validator('ignore_missing')],
+            'link_status_last_check': [toolkit.get_validator('ignore_missing')],
         })
         return schema
 
