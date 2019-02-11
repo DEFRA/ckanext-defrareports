@@ -1,8 +1,10 @@
 import logging
+from datetime import datetime, timedelta
+
 import requests
+from dateutil import parser
 from requests import RequestException
 
-from ckan.logic import NotFound
 from ckan.plugins import toolkit
 from ckanext.defrareports.helpers import get_package_extras
 
@@ -13,27 +15,24 @@ def check_dataset_resources_job(dataset):
     """
     Background job to check whether resources for a dataset exist.
     """
-    extras = get_package_extras(dataset)
-    if extras.get('private-resources', False):
-        return
-
     for resource in dataset['resources']:
         try:
-            resp = requests.get(resource['url'])
+            resp = requests.head(resource['url'], verify=False, timeout=10)
         except RequestException:
-            new_status = 'invalid'
+            status = 'invalid'
         else:
             if resp.status_code == 200:
-                new_status = 'active'
+                status = 'active'
             else:
-                new_status = 'dead'
+                status = 'dead'
 
-        if new_status != resource.get('link_status'):
+        if status != resource.get('link_status'):
             toolkit.get_action('resource_patch')({
                 'ignore_auth': True
             }, {
                 'id': resource['id'],
-                'link_status': new_status
+                'link_status': status,
+                'link_status_last_check': datetime.now().isoformat()
             })
 
 
@@ -76,13 +75,28 @@ class CheckBrokenResourcesCommand(toolkit.CkanCommand):
     def _is_broken(self):
         pass
 
+    def _needs_check(self, dataset):
+        # Private resources don't need to be checked
+        if get_package_extras(dataset).get('private-resources', False):
+            return False
+
+        # Resources need to be checked if they haven't been updated in the last 6 days
+        for resource in dataset['resource']:
+            # Only check the file if it hasn't been checked in the last week
+            last_check = resource.get('link_status_last_check')
+            cutoff = datetime.now() - timedelta(days=6)
+            if last_check is None or parser.parse(last_check) < cutoff:
+                return True
+        return False
+
     def command(self):
         self._load_config()
         datasets = self._get_all_datasets()
         for dataset in datasets:
-            toolkit.enqueue_job(
-                check_dataset_resources_job,
-                [dataset],
-                title='Resource check for {}'.format(dataset['name'])
-            )
+            if self._needs_check(dataset):
+                toolkit.enqueue_job(
+                    check_dataset_resources_job,
+                    [dataset],
+                    title='Resource check for {}'.format(dataset['name'])
+                )
         logger.info('Enqueued resource check jobs for {} resources'.format(len(datasets)))
