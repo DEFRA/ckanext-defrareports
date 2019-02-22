@@ -4,6 +4,7 @@
 # of criteria, but we can always add others in the rank_dataset function.
 
 import ckan.plugins.toolkit as toolkit
+from ckan.lib.helpers import url_for
 from ckanext.defrareports.lib.quality import score_record
 from ckanext.defrareports.lib.reports.utils import report, get_all_datasets
 
@@ -12,6 +13,7 @@ def bad_record(dataset, reasons):
     return {
         'name': dataset['name'],
         'title': dataset['title'],
+        'url': url_for(controller='package', action='read', id=dataset['name']),
         'reasons': reasons
     }
 
@@ -34,7 +36,8 @@ def quality_report():
     Defra metadata standards.
     """
     # Report which measures the quality of metadata within a publisher
-    table = []
+    csv_table = []
+    display_table = []
     context = {}
 
     organisation_list = toolkit.get_action('organization_list')(
@@ -67,11 +70,22 @@ def quality_report():
             entry['average'] /= entry['record_count']
 
         ranked.sort(key=lambda t: t[0])
-        bad_entries = [r for r in ranked if r[0] < 100][0:5]
+        bad_entries = [r for r in ranked if r[0] < 100]
 
-        entry['worst_offenders'] = bad_entries
-        table.append(entry)
+        entry['worst_offenders'] = bad_entries[0:5]
+        display_table.append(entry)
+
+        site_url = toolkit.config.get("ckan.site_url")
+        for score, entry in bad_entries:
+            csv_table.append({
+                'Publisher': organisation['title'],
+                'Dataset Name': entry['title'],
+                'Dataset URL': site_url + entry['url'],
+                'Quality Score': '{}%'.format(score),
+                'Issues': '\n'.join(entry['reasons']),
+            })
 
     return {
-        'table': table
+        'table': csv_table,
+        'display_table': display_table,
     }
