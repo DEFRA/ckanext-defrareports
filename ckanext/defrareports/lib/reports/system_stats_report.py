@@ -87,12 +87,7 @@ def system_stats_report():
                 counts['resource_formats'][resource['format']] = 0
             counts['resource_formats'][resource['format']] += 1
 
-
         counts['total_datasets'] += 1
-
-#    counts['licenses'],
-#    counts['resource_formats']: {},
-#     counts['import_sources'],
 
     return {
         'table': [{
