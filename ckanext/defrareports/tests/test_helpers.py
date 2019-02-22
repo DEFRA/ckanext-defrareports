@@ -1,11 +1,11 @@
 """Tests for plugin.py."""
 from ckan.tests.helpers import mock_action
-from base import BaseTest
+from base import BaseTestCase
 from nose.tools import assert_equal
 from ckanext.defrareports import helpers
 
 
-class TestDefraReportHelpers(BaseTest):
+class TestCaseDefraReportHelpers(BaseTestCase):
     """
     Test the various report helpers
     """

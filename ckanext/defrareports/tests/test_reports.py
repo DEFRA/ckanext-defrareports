@@ -1,13 +1,13 @@
 from ckan.tests.helpers import mock_action
 from nose.tools import assert_true
 
-from base import BaseTest
+from base import BaseTestCase
 from ckanext.defrareports.lib import reports
 
 # FIXME: Once reports have been updated update these tests
 
 
-class TestDefraReports(BaseTest):
+class TestCaseDefraReports(BaseTestCase):
     """
     Test that the various reports load successfully and are added to the catalog
     """

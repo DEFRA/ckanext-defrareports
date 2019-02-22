@@ -3,17 +3,14 @@ from ckan.tests.helpers import FunctionalTestBase
 from ckanext.harvest.model import setup as db_setup
 
 
-class BaseTest(FunctionalTestBase):
-    """
-    Test that the various report pages load successfully
-    """
+class BaseTestCase(FunctionalTestBase):
     _load_plugins = ['harvest']
 
     @classmethod
     def setup_class(cls):
-        super(BaseTest, cls).setup_class()
+        super(BaseTestCase, cls).setup_class()
         ctd.CreateTestData.create()
 
     def setup(self):
-        super(BaseTest, self).setup()
+        super(BaseTestCase, self).setup()
         db_setup()
