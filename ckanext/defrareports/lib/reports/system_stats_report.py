@@ -87,10 +87,24 @@ def system_stats_report():
                 counts['resource_formats'][resource['format']] = 0
             counts['resource_formats'][resource['format']] += 1
 
+
         counts['total_datasets'] += 1
 
+#    counts['licenses'],
+#    counts['resource_formats']: {},
+#     counts['import_sources'],
+
     return {
-        'table': [{}],
+        'table': [{
+            'Total Datasets': counts['total_datasets'],
+            'Datasets with Contact Info': counts['with_contact_email'],
+            'Datasets with Maintainer Email': counts['with_maintainer_email'],
+            'Datasets with Maintainer Name': counts['with_maintainer_name'],
+            'Open Datasets': counts['open_datasets'],
+            'Private Resources': counts['private_resources'],
+            'Datasets with Temporal Data': counts['temporal_datasets'],
+            'Datasets with Geospatial Data': counts['geospatial_datasets'],
+        }],
         'are_some_results': True,
         'counts': counts,
         'harvest_sources': harvest_sources,
