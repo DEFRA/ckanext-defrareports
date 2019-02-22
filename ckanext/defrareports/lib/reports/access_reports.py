@@ -25,7 +25,8 @@ def access_history_report():
     """
     This reports shows how many times dataset pages have been accessed for each organisation.
     """
-    table = []
+    display_table = []
+    data_table = []
     context = {}
 
     organisation_list = toolkit.get_action('organization_list')(
@@ -68,16 +69,20 @@ def access_history_report():
 
     # Build the graph entries for the template
     for org in organisation_list:
-        entry = {
+        display_entry = {
             'name': org['name'],
             'title': org['title'],
         }
+        display_entry.update({month: {'visited': count} for month, count in stats[org['name']].iteritems()})
+        display_table.append(display_entry)
 
-        for month, count in stats[org['name']].iteritems():
-            entry[month] = {'visited': count}
-
-        table.append(entry)
+        data_entry = {
+            'Publisher': org['name']
+        }
+        data_entry.update({month: count for month, count in stats[org['name']].iteritems()})
+        data_table.append(data_entry)
 
     return {
-        'table': table
+        'display_table': display_table,
+        'table': data_table
     }
