@@ -1,25 +1,19 @@
-import ckan.plugins
-from ckan import model
-from nose.tools import assert_equal
+import ckan.lib.create_test_data as ctd
+from ckan.tests.helpers import FunctionalTestBase
+from ckanext.harvest.model import setup as db_setup
 
 
-class BaseTest(object):
+class BaseTest(FunctionalTestBase):
     """
     Test that the various report pages load successfully
     """
+    _load_plugins = ['harvest']
+
     @classmethod
     def setup_class(cls):
-        if not ckan.plugins.plugin_loaded('defrareports'):
-            ckan.plugins.load('defrareports')
+        super(BaseTest, cls).setup_class()
+        ctd.CreateTestData.create()
 
-    def teardown(self):
-        # Rebuild ckan db after each test
-        model.repo.debuild_db()
-
-    @classmethod
-    def teardown_class(cls):
-        # Unload the plugin after all tests have run
-        ckan.plugins.unload('defrareports')
-
-    def test_resource_delete_editor(self):
-        assert_equal(1, 2)
+    def setup(self):
+        super(BaseTest, self).setup()
+        db_setup()
