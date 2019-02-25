@@ -47,8 +47,7 @@ def publishing_history_report():
 
         values = defaultdict(new_inner_dict)
         for dataset in datasets:
-            date = datetime.strptime(dataset['metadata_created'], '%Y-%m-%dT%H:%M:%S.%f')
-            created_date = date.strftime('%Y-%m-01')
+            created_date = datetime.strptime(dataset['metadata_created'], '%Y-%m-%dT%H:%M:%S.%f')
             values[created_date]['added'] = values[created_date]['added'] + 1
             modified_date = datetime.strptime(dataset['metadata_modified'], '%Y-%m-%dT%H:%M:%S.%f')
             values[modified_date]['modified'] = values[modified_date]['modified'] + 1
