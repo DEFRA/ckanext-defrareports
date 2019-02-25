@@ -1,4 +1,4 @@
-import re
+from datetime import datetime
 
 import sqlalchemy
 
@@ -79,7 +79,11 @@ def access_history_report():
         data_entry = {
             'Publisher': org['name']
         }
-        data_entry.update({month: count for month, count in stats[org['name']].iteritems()})
+        data_entry.update({
+            datetime.strptime(month, '%Y-%m-%d').strftime('%B %Y'): count
+            for month, count in stats[org['name']].iteritems()
+        })
+
         data_table.append(data_entry)
 
     return {
