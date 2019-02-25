@@ -20,7 +20,8 @@ from ckanext.defrareports.lib.reports.utils import report, generate_months, get_
 def publishing_history_report():
     """For each organisation, this report shows both the addition on new dataset records and
     the modification of those records for the last 12 months."""
-    table = []
+    data_table = []
+    display_table = []
     context = {}
 
     organisation_list = toolkit.get_action('organization_list')(
@@ -33,9 +34,12 @@ def publishing_history_report():
     for organisation in organisation_list:
         datasets = get_all_datasets(org=organisation['name'])
 
-        entry = {
+        display_entry = {
             'name': organisation['name'],
             'title': organisation['title'],
+        }
+        data_entry = {
+            'Publisher': organisation['title']
         }
 
         def new_inner_dict():
@@ -50,10 +54,15 @@ def publishing_history_report():
             values[modified_date]['modified'] = values[modified_date]['modified'] + 1
 
         for month in generate_months():
-            entry[month] = values[month]
+            display_entry[month] = values[month]
+            pretty_month = datetime.strptime(month, '%Y-%m-%d').strftime('%B %Y')
+            data_entry['Added {}'.format(pretty_month)] = values[month]['added']
+            data_entry['Modified {}'.format(pretty_month)] = values[month]['modified']
 
-        table.append(entry)
+        display_table.append(display_entry)
+        data_table.append(data_entry)
 
     return {
-        'table': table
+        'table': data_table,
+        'display_table': display_table
     }
