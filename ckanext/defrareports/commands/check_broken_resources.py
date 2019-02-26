@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime, timedelta
+from urlparse import urlparse
 
 import requests
 from dateutil import parser
@@ -16,15 +17,19 @@ def check_dataset_resources_job(dataset):
     Background job to check whether resources for a dataset exist.
     """
     for resource in dataset['resources']:
-        try:
-            resp = requests.head(resource['url'], verify=False, timeout=10)
-        except RequestException:
-            status = 'invalid'
+        parsed_url = urlparse(resource['url'])
+        if parsed_url.scheme not in ['http', 'https']:
+            status = 'uncheckable'
         else:
-            if resp.status_code == 200:
-                status = 'active'
-            else:
+            try:
+                resp = requests.head(resource['url'], verify=False, timeout=10)
+            except RequestException:
                 status = 'dead'
+            else:
+                if resp.status_code == 200:
+                    status = 'active'
+                else:
+                    status = 'dead'
 
         if status != resource.get('link_status'):
             toolkit.get_action('resource_patch')({
