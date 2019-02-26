@@ -4,6 +4,7 @@ import sqlalchemy
 
 import ckan.model as model
 import ckan.plugins.toolkit as toolkit
+from ckan.lib.helpers import url_for
 from ckanext.defrareports.lib.reports.utils import report, generate_months
 from ckanext.ga_report import ga_model
 from ckanext.ga_report.ga_model import GA_Url
@@ -37,7 +38,6 @@ def access_history_report():
     )
 
     org_ids = [x['name'] for x in organisation_list]
-
     # Get counts of visits per month per organisation from google analytics
     q = model.Session.query(
         GA_Url.department_id,
@@ -47,7 +47,7 @@ def access_history_report():
         ).filter(
             GA_Url.department_id.in_(org_ids)
         ).filter(
-            GA_Url.url.like('/dataset/%')
+            GA_Url.url.like(url_for(controller='package', action='search') + '/%')
         ).filter(
             GA_Url.package_id != ''
         ).filter(
