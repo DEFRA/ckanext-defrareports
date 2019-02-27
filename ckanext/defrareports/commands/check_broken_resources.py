@@ -59,7 +59,7 @@ class CheckBrokenResourcesCommand(toolkit.CkanCommand):
         }, {
             'q': '',
             'rows': 1000,
-            'start': offset
+            'start': offset#
         })
 
     def _get_all_datasets(self):
@@ -86,7 +86,7 @@ class CheckBrokenResourcesCommand(toolkit.CkanCommand):
             return False
 
         # Resources need to be checked if they haven't been updated in the last 6 days
-        for resource in dataset['resource']:
+        for resource in dataset['resources']:
             # Only check the file if it hasn't been checked in the last week
             last_check = resource.get('link_status_last_check')
             cutoff = datetime.now() - timedelta(days=6)
