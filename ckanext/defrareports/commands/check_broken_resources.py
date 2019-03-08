@@ -64,7 +64,7 @@ class CheckBrokenResourcesCommand(toolkit.CkanCommand):
         }, {
             'q': '',
             'rows': 1000,
-            'start': offset#
+            'start': offset
         })
 
     def _get_all_datasets(self):
