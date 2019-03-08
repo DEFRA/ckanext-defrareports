@@ -22,9 +22,14 @@ def check_dataset_resources_job(dataset):
             status = 'uncheckable'
         else:
             try:
-                resp = requests.head(resource['url'], verify=False, timeout=10)
+                resp = requests.head(
+                    resource['url'],
+                    verify=False,
+                    timeout=10,
+                    allow_redirects=True
+                )
             except RequestException:
-                status = 'dead'
+                status = 'invalid'
             else:
                 if resp.status_code == 200:
                     status = 'active'
