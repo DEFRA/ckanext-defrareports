@@ -5,7 +5,7 @@ from nose.tools import assert_equal
 from ckanext.defrareports import helpers
 
 
-class TestCaseDefraReportHelpers(BaseTestCase):
+class TestHelpers(BaseTestCase):
     """
     Test the various report helpers
     """
