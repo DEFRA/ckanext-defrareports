@@ -1,8 +1,10 @@
 {% block primary %}
   {% for row in data['display_table'] %}
-    <h3>{{ row.title }} </h3>
-    <div id="chart_{{row.name}}"></div>
-    <hr />
+    <div class="publisher-chart">
+      <h3>{{ row.title }} </h3>
+      <div id="chart_{{row.name}}"></div>
+      <hr />
+    </div>
   {% endfor %}
 {% endblock %}
 {% block scripts %}
