@@ -7,6 +7,8 @@ echo "Installing the packages that CKAN requires..."
 sudo apt-get update -qq
 sudo apt-get install solr-jetty
 
+python setup.py develop
+
 echo "Installing CKAN and its Python dependencies..."
 git clone https://github.com/ckan/ckan
 cd ckan
@@ -21,7 +23,7 @@ pip install -r dev-requirements.txt
 cd -
 
 echo "Creating the PostgreSQL user and database..."
-sudo -u postgres psql -c "CREATE USER ckan_default WITH PASSWORD 'pass';"
+sudo -u postgres psql -c "CREATE USER ckan_default WITH PASSWORD 'ckan';"
 sudo -u postgres psql -c 'CREATE DATABASE ckan_test WITH OWNER ckan_default;'
 
 echo "SOLR config..."
