@@ -1,1 +1,2 @@
 -e git://github.com/servercode/ckanext-report.git#egg=ckanext-report
+-e git://github.com/ckan/ckanext-harvest.git#egg=ckanext-harvest
