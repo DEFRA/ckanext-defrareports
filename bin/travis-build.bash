@@ -20,6 +20,7 @@ pip install --upgrade setuptools
 python setup.py develop
 pip install -r requirements.txt
 pip install -r dev-requirements.txt
+pip install -r src/ckanext-harvest/pip-requirements.txt
 cd -
 
 echo "Creating the PostgreSQL user and database..."
