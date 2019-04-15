@@ -33,7 +33,12 @@ sed -i -e 's/solr_url.*/solr_url = http:\/\/127.0.0.1:8983\/solr/' test.ini
 
 echo "Initialising the database..."
 paster --plugin=ckan db init -c test.ini
-#cd -
+
+echo "Initialising the harvest plugin"
+paster --plugin=ckanext-harvest harvester initdb -c test.ini
+
+echo "Initialising the analytics report plugin"
+paster --plugin=ckanext-ga-report initdb -c test.ini
 
 echo "Installing ckanext-defrareports and its requirements..."
 python setup.py develop
