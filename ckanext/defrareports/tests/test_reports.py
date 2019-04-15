@@ -29,5 +29,5 @@ class TestCaseDefraReports(BaseTestCase):
 
     @mock_action('package_create')
     def test_system_stats(self, mock_package_create):
-        report = reports.system_stats_report['generate']()
+        report = reports.system_stats_report.system_stats_report['generate']()
         assert_true(mock_package_create.called_once)
