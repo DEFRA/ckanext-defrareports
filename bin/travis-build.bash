@@ -16,7 +16,6 @@ cd ckan
 export latest_ckan_release_branch=ckan-2.8.2
 echo "CKAN branch: $latest_ckan_release_branch"
 git checkout $latest_ckan_release_branch
-
 pip install --upgrade setuptools
 python setup.py develop
 pip install -r requirements.txt
@@ -34,7 +33,7 @@ sed -i -e 's/solr_url.*/solr_url = http:\/\/127.0.0.1:8983\/solr/' test.ini
 
 echo "Initialising the database..."
 paster --plugin=ckan db init -c test.ini
-cd -
+#cd -
 
 echo "Installing ckanext-defrareports and its requirements..."
 python setup.py develop
