@@ -4,6 +4,8 @@ set -e
 echo "This is travis-build.bash..."
 
 echo "Installing the packages that CKAN requires..."
+sudo apt-get update -qq
+sudo apt-get install solr-jetty
 
 echo "Installing CKAN and its Python dependencies..."
 git clone https://github.com/ckan/ckan
@@ -25,11 +27,10 @@ sudo -u postgres psql -c 'CREATE DATABASE ckan_test WITH OWNER ckan_default;'
 echo "SOLR config..."
 # Solr is multicore for tests on ckan master, but it's easier to run tests on
 # Travis single-core. See https://github.com/ckan/ckan/issues/2972
-#sed -i -e 's/solr_url.*/solr_url = http:\/\/127.0.0.1:8983\/solr/' ckan/test-core.ini
+sed -i -e 's/solr_url.*/solr_url = http:\/\/127.0.0.1:8983\/solr/' test.ini
 
 echo "Initialising the database..."
-cd ckan
-paster db init -c test-core.ini
+paster db init -c test.ini
 cd -
 
 echo "Installing ckanext-defrareports and its requirements..."
