@@ -1,10 +1,13 @@
 ====================
 ckanext-defrareports
 ====================
+.. image:: https://travis-ci.org/DEFRA/ckanext-defrareports.svg?branch=master
+    :target: https://travis-ci.org/DEFRA/ckanext-defrareports
 
 **Status:** Development
 
 **CKAN Version**: 2.6+
+
 
 --------
 Overview
