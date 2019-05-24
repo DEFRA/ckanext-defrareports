@@ -126,7 +126,7 @@ class Checks(object):
         try:
             start_date = parse(start)
             end_date = parse(end)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError, AttributeError):
             return False
 
         # Ensure datetimes are not naive
